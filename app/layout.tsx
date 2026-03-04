@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ActorsProvider } from "./actors-store";
+import { ActorsProvider } from "./actor";
 
 export const metadata: Metadata = {
   title: "Preparcial 1",

@@ -20,19 +20,42 @@ const forwardResponse = async (response: Response) => {
   });
 };
 
+async function forwardUpdate(
+  request: Request,
+  id: string,
+  method: "PUT" | "PATCH",
+) {
+  const payload = await request.json();
+  const response = await fetch(getUrl(id), {
+    method,
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return forwardResponse(response);
+}
+
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
-    const payload = await request.json();
-    const response = await fetch(getUrl(id), {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    return forwardResponse(response);
+    return forwardUpdate(request, id, "PUT");
+  } catch {
+    return NextResponse.json(
+      { message: "No fue posible actualizar el actor" },
+      { status: 503 },
+    );
+  }
+}
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+    return forwardUpdate(request, id, "PATCH");
   } catch {
     return NextResponse.json(
       { message: "No fue posible actualizar el actor" },

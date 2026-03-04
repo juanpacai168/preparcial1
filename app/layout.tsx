@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ActorsProvider } from "./actor";
 
 export const metadata: Metadata = {
   title: "Preparcial 1",
@@ -12,9 +11,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es">
-      <body>
-        <ActorsProvider>{children}</ActorsProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

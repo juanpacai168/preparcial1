@@ -34,6 +34,24 @@ async function forwardUpdate(
   return forwardResponse(response);
 }
 
+export async function GET(
+  _: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+    const response = await fetch(getUrl(id), {
+      cache: "no-store",
+    });
+    return forwardResponse(response);
+  } catch {
+    return NextResponse.json(
+      { message: "No fue posible cargar el actor" },
+      { status: 503 },
+    );
+  }
+}
+
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> },

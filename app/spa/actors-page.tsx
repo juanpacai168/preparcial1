@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
 type Actor = {
   id: string;
   name: string;
@@ -51,9 +50,17 @@ export default function ActorsPage() {
 
   const eliminarActor = async (id: string) => {
     setDeletingId(id);
-    await fetch(`/api/v1/actors/${encodeURIComponent(id)}`, { method: "DELETE" });
-    setActores((prev) => prev.filter((actor) => actor.id !== id));
-    setDeletingId(null);
+    try {
+      const response = await fetch(`/api/v1/actors/${encodeURIComponent(id)}`, { method: "DELETE" });
+      if (!response.ok) {
+        throw new Error("No se pudo eliminar el actor.");
+      }
+      setActores((prev) => prev.filter((actor) => actor.id !== id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error al eliminar actor.");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -122,12 +129,7 @@ const th = {
   textAlign: "left" as const,
   backgroundColor: "#f5f5f5",
 };
-
-const td = {
-  border: "1px solid #ddd",
-  padding: "0.5rem",
-};
-
+const td = { border: "1px solid #ddd", padding: "0.5rem" };
 const buttonPrimary = {
   backgroundColor: "#0b5cab",
   color: "#fff",

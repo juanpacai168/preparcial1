@@ -13,6 +13,7 @@ export default function RouterApp() {
         <Route path="/actors" element={<ActorsPage />} />
         <Route path="/crear" element={<CrearPage />} />
         <Route path="/actors/:actorId/editar" element={<EditarPage />} />
+        <Route path="/actors/:actorId/edit" element={<EditarPage />} />
         <Route path="*" element={<Navigate to="/actors" replace />} />
       </Routes>
     </BrowserRouter>

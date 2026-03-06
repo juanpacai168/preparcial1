@@ -28,7 +28,7 @@ export async function GET() {
     return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible conectar con el backend de actores" },
+      { message: "No fue posible conectar con el backend de actores." },
       { status: 503 },
     );
   }
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible crear el actor" },
+      { message: "No fue posible crear el actor." },
       { status: 503 },
     );
   }

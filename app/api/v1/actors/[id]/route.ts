@@ -20,23 +20,11 @@ const forwardResponse = async (response: Response) => {
   });
 };
 
-async function forwardUpdate(
-  request: Request,
-  id: string,
-  method: "PUT" | "PATCH",
-) {
-  const payload = await request.json();
-  const response = await fetch(getUrl(id), {
-    method,
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  return forwardResponse(response);
-}
+type Params = { params: Promise<{ id: string }> };
 
 export async function GET(
   _: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: Params,
 ) {
   try {
     const { id } = await params;
@@ -46,7 +34,7 @@ export async function GET(
     return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible cargar el actor" },
+      { message: "No fue posible cargar el actor." },
       { status: 503 },
     );
   }
@@ -54,14 +42,20 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: Params,
 ) {
   try {
     const { id } = await params;
-    return forwardUpdate(request, id, "PUT");
+    const payload = await request.json();
+    const response = await fetch(getUrl(id), {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible actualizar el actor" },
+      { message: "No fue posible actualizar el actor." },
       { status: 503 },
     );
   }
@@ -69,14 +63,20 @@ export async function PUT(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: Params,
 ) {
   try {
     const { id } = await params;
-    return forwardUpdate(request, id, "PATCH");
+    const payload = await request.json();
+    const response = await fetch(getUrl(id), {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible actualizar el actor" },
+      { message: "No fue posible actualizar el actor." },
       { status: 503 },
     );
   }
@@ -84,7 +84,7 @@ export async function PATCH(
 
 export async function DELETE(
   _: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: Params,
 ) {
   try {
     const { id } = await params;
@@ -94,7 +94,7 @@ export async function DELETE(
     return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible eliminar el actor" },
+      { message: "No fue posible eliminar el actor." },
       { status: 503 },
     );
   }

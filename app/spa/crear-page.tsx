@@ -110,7 +110,7 @@ export default function CrearPage() {
               {saving ? "Guardando..." : "Crear"}
             </button>{" "}
             <Link to="/actors" style={buttonLight}>
-              Volver a /actors
+              Volver a la lista de actores
             </Link>
           </div>
         </form>

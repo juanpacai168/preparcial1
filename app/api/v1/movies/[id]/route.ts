@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 const BACKEND_BASE_URL =
   process.env.BACKEND_API_BASE_URL ?? "http://localhost:3000/api/v1";
 
-const getUrl = (id: string) => `${BACKEND_BASE_URL}/actors/${id}`;
+const getUrl = (id: string) => `${BACKEND_BASE_URL}/movies/${id}`;
 const NO_BODY_STATUS = new Set([204, 205, 304]);
 
 const forwardResponse = async (response: Response) => {
@@ -34,7 +34,7 @@ export async function GET(
     return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible cargar el actor." },
+      { message: "No fue posible cargar la pelicula." },
       { status: 503 },
     );
   }
@@ -55,7 +55,7 @@ export async function PUT(
     return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible actualizar el actor." },
+      { message: "No fue posible actualizar la pelicula." },
       { status: 503 },
     );
   }
@@ -76,7 +76,7 @@ export async function PATCH(
     return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible actualizar el actor." },
+      { message: "No fue posible actualizar la pelicula." },
       { status: 503 },
     );
   }
@@ -88,13 +88,39 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
+    const currentResponse = await fetch(getUrl(id), {
+      cache: "no-store",
+    });
+
+    if (!currentResponse.ok) {
+      return forwardResponse(currentResponse);
+    }
+
+    const current = (await currentResponse.json()) as Record<string, unknown>;
+    const normalized = {
+      ...current,
+      actors: [],
+      platforms: [],
+      reviews: [],
+    };
+
+    const detachResponse = await fetch(getUrl(id), {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(normalized),
+    });
+
+    if (!detachResponse.ok) {
+      return forwardResponse(detachResponse);
+    }
+
     const response = await fetch(getUrl(id), {
       method: "DELETE",
     });
     return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible eliminar el actor." },
+      { message: "No fue posible eliminar la pelicula." },
       { status: 503 },
     );
   }

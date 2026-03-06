@@ -20,15 +20,30 @@ const forwardResponse = async (response: Response) => {
   });
 };
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const response = await fetch(getUrl("/actors"), {
-      cache: "no-store",
+    const { searchParams } = new URL(request.url);
+    const actorId = searchParams.get("actorId");
+
+    const response = await fetch(getUrl("/movies"), { cache: "no-store" });
+    const rows = (await response.json()) as Record<string, unknown>[];
+
+    if (!actorId) {
+      return NextResponse.json(rows, { status: 200 });
+    }
+
+    const filtered = rows.filter((movie) => {
+      if (String(movie.actorId ?? "") === actorId) return true;
+      const actors = Array.isArray(movie.actors)
+        ? (movie.actors as Record<string, unknown>[])
+        : [];
+      return actors.some((actor) => String(actor.id ?? "") === actorId);
     });
-    return forwardResponse(response);
+
+    return NextResponse.json(filtered, { status: 200 });
   } catch {
     return NextResponse.json(
-      { message: "No fue posible conectar con el backend de actores." },
+      { message: "No fue posible conectar con el backend de peliculas." },
       { status: 503 },
     );
   }
@@ -37,7 +52,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const payload = await request.json();
-    const response = await fetch(getUrl("/actors"), {
+    const response = await fetch(getUrl("/movies"), {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(payload),
@@ -45,7 +60,7 @@ export async function POST(request: Request) {
     return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible crear el actor." },
+      { message: "No fue posible crear la pelicula." },
       { status: 503 },
     );
   }

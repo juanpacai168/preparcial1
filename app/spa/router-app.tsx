@@ -6,6 +6,8 @@ import ActorFormPage from "./actor-form-page";
 import ActorDetailPage from "./actor-detail-page";
 import MoviesPage from "./movies-page";
 import MovieFormPage from "./movie-form-page";
+import MovieDetailPage from "./movie-detail-page";
+import PrizeFormPage from "./prize-form-page";
 
 export default function RouterApp() {
   return (
@@ -18,8 +20,10 @@ export default function RouterApp() {
         <Route path="/actors/:actorId/edit" element={<ActorFormPage />} />
         <Route path="/movies" element={<MoviesPage />} />
         <Route path="/movies/new" element={<MovieFormPage />} />
+        <Route path="/movies/:movieId" element={<MovieDetailPage />} />
         <Route path="/movies/:movieId/edit" element={<MovieFormPage />} />
-        <Route path="/crear" element={<Navigate to="/actors/new" replace />} />
+        <Route path="/prizes/new" element={<PrizeFormPage />} />
+        <Route path="/crear" element={<Navigate to="/movies/new" replace />} />
         <Route path="/actors/:actorId/editar" element={<ActorFormPage />} />
         <Route path="*" element={<Navigate to="/actors" replace />} />
       </Routes>

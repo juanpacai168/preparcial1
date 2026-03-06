@@ -39,7 +39,7 @@ export default function ActorDetailPage() {
       <p>
         <Link to="/actors" style={buttonLight}>Volver a actores</Link>{" "}
         {actorId && (
-          <Link to={`/movies/new?actorId=${encodeURIComponent(actorId)}`} style={buttonPrimary}>
+          <Link to="/movies/new" style={buttonPrimary}>
             Nueva pelicula para este actor
           </Link>
         )}

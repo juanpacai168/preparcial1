@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Actor, Movie, mapActor, mapMovie } from "./types";
+import { Movie, mapMovie } from "./types";
 
 export default function MoviesPage() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [actors, setActors] = useState<Actor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -14,17 +13,10 @@ export default function MoviesPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [movieResponse, actorResponse] = await Promise.all([
-          fetch("/api/v1/movies"),
-          fetch("/api/v1/actors"),
-        ]);
-        if (!movieResponse.ok || !actorResponse.ok) {
-          throw new Error("No se pudo cargar la informacion.");
-        }
+        const movieResponse = await fetch("/api/v1/movies");
+        if (!movieResponse.ok) throw new Error("No se pudo cargar la informacion.");
         const movieRows = (await movieResponse.json()) as Record<string, unknown>[];
-        const actorRows = (await actorResponse.json()) as Record<string, unknown>[];
         setMovies(movieRows.map(mapMovie));
-        setActors(actorRows.map(mapActor));
       } catch (err) {
         setError(err instanceof Error ? err.message : "Error al cargar peliculas.");
       } finally {
@@ -33,11 +25,6 @@ export default function MoviesPage() {
     };
     load();
   }, []);
-
-  const actorById = useMemo(
-    () => new Map(actors.map((actor) => [actor.id, actor])),
-    [actors],
-  );
 
   const removeMovie = async (id: string) => {
     setDeletingId(id);
@@ -63,6 +50,7 @@ export default function MoviesPage() {
         <h1>Peliculas</h1>
         <nav style={navStyle}>
           <Link to="/movies/new" style={buttonPrimary}>Nueva pelicula</Link>
+          <Link to="/prizes/new" style={buttonLight}>Nuevo premio</Link>
           <Link to="/actors" style={buttonLight}>Ir a actores</Link>
         </nav>
       </header>
@@ -76,32 +64,23 @@ export default function MoviesPage() {
             <thead>
               <tr>
                 <th style={th}>Titulo</th>
-                <th style={th}>Actor</th>
-                <th style={th}>Duracion</th>
-                <th style={th}>Pais</th>
                 <th style={th}>Estreno</th>
-                <th style={th}>Popularidad</th>
+                <th style={th}>Autor principal</th>
+                <th style={th}>Premio</th>
                 <th style={th}>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {movies.map((movie) => (
                 <tr key={movie.id}>
-                  <td style={td}>{movie.title}</td>
                   <td style={td}>
-                    {actorById.get(movie.actorId) ? (
-                      <Link to={`/actors/${movie.actorId}`}>
-                        {actorById.get(movie.actorId)?.name}
-                      </Link>
-                    ) : (
-                      "Sin actor"
-                    )}
+                    <Link to={`/movies/${movie.id}`}>{movie.title}</Link>
                   </td>
-                  <td style={td}>{movie.duration} min</td>
-                  <td style={td}>{movie.country}</td>
                   <td style={td}>{movie.releaseDate}</td>
-                  <td style={td}>{movie.popularity}</td>
+                  <td style={td}>{movie.actors[0]?.name || "Sin autor"}</td>
+                  <td style={td}>{movie.prizes[0]?.name || "Sin premio"}</td>
                   <td style={td}>
+                    <Link style={buttonLight} to={`/movies/${movie.id}`}>Detalle</Link>{" "}
                     <Link style={buttonLight} to={`/movies/${movie.id}/edit`}>Editar</Link>{" "}
                     <button
                       style={buttonDanger}

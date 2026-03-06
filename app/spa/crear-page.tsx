@@ -1,7 +1,7 @@
 "use client";
 
-import ActorFormPage from "./actor-form-page";
+import MovieFormPage from "./movie-form-page";
 
 export default function CrearPage() {
-  return <ActorFormPage />;
+  return <MovieFormPage />;
 }

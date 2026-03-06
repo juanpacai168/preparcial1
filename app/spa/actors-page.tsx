@@ -47,6 +47,7 @@ export default function ActorsPage() {
         <h1>Actores</h1>
         <nav style={navStyle}>
           <Link to="/actors/new" style={buttonPrimary}>Nuevo actor</Link>
+          <Link to="/prizes/new" style={buttonLight}>Nuevo premio</Link>
           <Link to="/movies" style={buttonLight}>Ir a peliculas</Link>
         </nav>
       </header>

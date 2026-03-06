@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 const BACKEND_BASE_URL =
   process.env.BACKEND_API_BASE_URL ?? "http://localhost:3000/api/v1";
 
-const getUrl = (id: string) => `${BACKEND_BASE_URL}/movies/${id}`;
+const getUrl = (actorId: string) => `${BACKEND_BASE_URL}/actors/${actorId}`;
 const NO_BODY_STATUS = new Set([204, 205, 304]);
 
 const forwardResponse = async (response: Response) => {
@@ -20,21 +20,21 @@ const forwardResponse = async (response: Response) => {
   });
 };
 
-type Params = { params: Promise<{ id: string }> };
+type Params = { params: Promise<{ actorId: string }> };
 
 export async function GET(
   _: Request,
   { params }: Params,
 ) {
   try {
-    const { id } = await params;
-    const response = await fetch(getUrl(id), {
+    const { actorId } = await params;
+    const response = await fetch(getUrl(actorId), {
       cache: "no-store",
     });
     return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible cargar la pelicula." },
+      { message: "No fue posible cargar el actor." },
       { status: 503 },
     );
   }
@@ -45,9 +45,9 @@ export async function PUT(
   { params }: Params,
 ) {
   try {
-    const { id } = await params;
+    const { actorId } = await params;
     const payload = await request.json();
-    const response = await fetch(getUrl(id), {
+    const response = await fetch(getUrl(actorId), {
       method: "PUT",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(payload),
@@ -55,7 +55,7 @@ export async function PUT(
     return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible actualizar la pelicula." },
+      { message: "No fue posible actualizar el actor." },
       { status: 503 },
     );
   }
@@ -66,9 +66,9 @@ export async function PATCH(
   { params }: Params,
 ) {
   try {
-    const { id } = await params;
+    const { actorId } = await params;
     const payload = await request.json();
-    const response = await fetch(getUrl(id), {
+    const response = await fetch(getUrl(actorId), {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(payload),
@@ -76,7 +76,7 @@ export async function PATCH(
     return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible actualizar la pelicula." },
+      { message: "No fue posible actualizar el actor." },
       { status: 503 },
     );
   }
@@ -87,40 +87,14 @@ export async function DELETE(
   { params }: Params,
 ) {
   try {
-    const { id } = await params;
-    const currentResponse = await fetch(getUrl(id), {
-      cache: "no-store",
-    });
-
-    if (!currentResponse.ok) {
-      return forwardResponse(currentResponse);
-    }
-
-    const current = (await currentResponse.json()) as Record<string, unknown>;
-    const normalized = {
-      ...current,
-      actors: [],
-      platforms: [],
-      reviews: [],
-    };
-
-    const detachResponse = await fetch(getUrl(id), {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(normalized),
-    });
-
-    if (!detachResponse.ok) {
-      return forwardResponse(detachResponse);
-    }
-
-    const response = await fetch(getUrl(id), {
+    const { actorId } = await params;
+    const response = await fetch(getUrl(actorId), {
       method: "DELETE",
     });
     return forwardResponse(response);
   } catch {
     return NextResponse.json(
-      { message: "No fue posible eliminar la pelicula." },
+      { message: "No fue posible eliminar el actor." },
       { status: 503 },
     );
   }
